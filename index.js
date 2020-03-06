@@ -26,10 +26,20 @@ app.on("ready", () => {
 
   tray = new Tray(iconPath);
 
-  tray.on("click", () => {
+  tray.on("click", (event, bounds) => {
+    const { x, y } = bounds;
+    const { height, width } = mainBrowserWindow.getBounds();
+
     if (mainBrowserWindow.isVisible()) {
       mainBrowserWindow.hide();
     } else {
+      const yPosition = process.platform === "darwin" ? y : y - height;
+      mainBrowserWindow.setBounds({
+        x: x - width,
+        y: yPosition,
+        height,
+        width
+      });
       mainBrowserWindow.show();
     }
   });
